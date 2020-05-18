@@ -85,6 +85,8 @@ let enemyRosterDisp = $("#enemy-roster-display");
 let playerCharDisp = $("#current-player-character-display");
 let currentEnemyDisp = $("#current-player-enemy-display");
 
+let attackBtn = $("#attack-button");
+
 let winsText = $("#wins-text");
 let lossesText = $("#losses-text");
 
@@ -274,7 +276,17 @@ $(document).ready(() => {
     renderCharacterCards(currentEnemyList, currentEnemyDisp);
   });
 
-  // Create a function to
+  // Create a function to listens for click of the attack button
+  attackBtn.on("click", function () {
+    // Check to see if user has chosen a character yet
+    if (!playerHasChosen) {
+      alert("Please choose a character first!");
+    } else {
+      console.log("Attack BTN Clicked");
+
+      
+    }
+  });
 
   // Create a function that inializes the game
   initializeGameFunc = () => {
