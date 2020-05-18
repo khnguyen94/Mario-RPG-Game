@@ -20,8 +20,128 @@
     <!-- Link Custom CSS Overrides-->
     <link rel="stylesheet" href="./assets/css/style.css" />
 
-    <title>Document</title>
+    <title>Mario RPG Game</title>
   </head>
 
-  <body></body>
+  <body>
+      <!-- Create game header and include: Game name & directions how to play -->
+    <div class="container">
+        <div class="jumbotron">
+          <div class="row">
+            <!-- Create the game title banner -->
+            <img
+              id="logo-img"
+              class="rounded mx-auto d-block"
+              src="./assets/images/SSB-Logo.png"
+              alt="Super Smash Bros"
+            />
+          </div>
+        </div>
+  
+        <br />
+  
+        <div class="jumbotron">
+          <!-- Create the game instructions display -->
+          <div id="directions-row" class="row">
+            <!-- Press Enter to start image -->
+            <img
+              id="directions-img"
+              class="rounded mx-auto d-block"
+              src="./assets/images/Directions.gif"
+              alt="Select A Character to Start"
+            />
+          </div>
+  
+          <br />
+          <!-- Create the game content display  -->
+          <div class="col">
+            <!-- Create character selection display -->
+            <div
+              id="character-selection-row"
+              class="row justify-content-md-center"
+            >
+              <div class="col">
+                <div id="character-selection-container" class="container">
+                  <h1 id="character-selection-title">Character Selection</h1>
+                  <!-- Insert all 6 character cards here -->
+                  <div id="character-selection-display"></div>
+                </div>
+              </div>
+            </div>
+  
+            <br />
+  
+            <!-- Create enemy display -->
+            <div id="enemies-row" class="row justify-content-md-center">
+              <div class="col">
+                <div id="enemies-container" class="container">
+                  <!-- Insert all 5 remaining character cards here as the enemies -->
+                  <br />
+                  <h1 id="remaining-enemies-title">Remaining Enemies Selection</h1>
+                  <div id="remaining-enemies-display"></div>
+                </div>
+              </div>
+            </div>
+  
+            <br />
+  
+            <!-- Create battlefield display -->
+            <div id="battlefield-row" class="row justify-content-md-center">
+              <!-- Insert a 1v1 battlefield -->
+              <!-- Player's character -->
+              <div id="current-player-character-column" class="col col-md-4">
+                <h3>Your Character</h3>
+                <div id="current-player-character-display"></div>
+              </div>
+              <!-- versus -->
+              <div class="col">
+                <h2>VS</h2>
+              </div>
+              <!-- Current Enemy -->
+              <div id="current-enemy-character-column" class="col col-md-4">
+                <h3>Your Enemy</h3>
+                <div id="current-player-enemy-display"></div>
+              </div>
+            </div>
+  
+            <br />
+  
+            <!-- Create win/loss display -->
+            <div id="game-content-row" class="row justify-content-md-center">
+             <div id="attack-column" class="col-md-3">
+                <button id="attack-button">Attack</button>
+             </div>
+  
+             <div id="stats-column" class="col-md-6">
+                <div id="wins-text-col" class="col">
+                    <h4>
+                      Wins:
+                      <h5 id="wins-text"></h5>
+                    </h4>
+                  </div>
+                  <div id="losses-text-col" class="col">
+                    <h4>
+                      Losses:
+                      <h5 id="losses-text"></h5>
+                    </h4>
+                  </div>
+             </div>
+  
+          </div>
+        </div>
+  
+        <!-- Link JQuery CDN -->
+        <script
+          type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+        ></script>
+  
+        <!-- Link JS Game File -->
+        <script
+          type="text/javascript"
+          src="../assets/javascript/game.js"
+        ></script>
+      </div>
+  </body>
+
 </html>
