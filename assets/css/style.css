@@ -38,6 +38,15 @@ h1 {
     padding: 10px;
 }
 
+#enemy-roster-row {
+    border: 2px solid black;
+}
+
+#enemy-roster-container {
+    width: 100%;
+    padding: 10px;
+}
+
 .card {
     width: 148px;
     height: 290px; 
@@ -60,6 +69,18 @@ h1 {
     text-align: center;
 }
 
+.card-hp {
+    margin: 0;
+}
+
+.card-atk {
+    margin: 0;
+}
+
+.card-str {
+    margin: 0;
+}
+
 .card-text {
     color: black;
     text-align: center;
@@ -67,7 +88,6 @@ h1 {
 
 #enemies-row {
     border: 2px solid black;
-    display: none;
 }
 
 #battlefield-row {
