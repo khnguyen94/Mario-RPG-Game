@@ -5,6 +5,7 @@ const characterList = {
     name: "Mario",
     image: "./assets/images/mario.png",
     hp: 100,
+    isAlive: true,
     attack: 60,
     strength: 20,
   },
@@ -13,6 +14,7 @@ const characterList = {
     name: "Bowser",
     image: "./assets/images/bowser.png",
     hp: 100,
+    isAlive: true,
     attack: 35,
     strength: 50,
   },
@@ -21,6 +23,7 @@ const characterList = {
     name: "Captain Falco",
     image: "./assets/images/captain-falco.png",
     hp: 100,
+    isAlive: true,
     attack: 55,
     strength: 20,
   },
@@ -29,6 +32,7 @@ const characterList = {
     name: "Princess Peach",
     image: "./assets/images/princess-peach.png",
     hp: 100,
+    isAlive: true,
     attack: 40,
     strength: 30,
   },
@@ -37,6 +41,7 @@ const characterList = {
     name: "Samus",
     image: "./assets/images/samus.png",
     hp: 100,
+    isAlive: true,
     attack: 45,
     strength: 35,
   },
@@ -45,6 +50,7 @@ const characterList = {
     name: "Yoshi",
     image: "./assets/images/yoshi.png",
     hp: 100,
+    isAlive: true,
     attack: 45,
     strength: 40,
   },
@@ -69,8 +75,14 @@ let enemiesNamesArr = [];
 
 let enemyIsChosen = false;
 
-let attackRoll = 0;
-let doneFighting = false;
+// Initiate battle variables
+let atkSuccessMsg = "You attacked " + currentEnemyText + " for __ damage!";
+let atkFailMsg = "Your attack missed " + currentEnemyText + "!";
+
+let atkWasSuccessful = false;
+let attackSuccessRoll = 0;
+let fightOver = false;
+let allEnemiesBeat = false;
 let killCount = 0;
 
 // Create references to DOM elements that will be manipulated at all
@@ -87,8 +99,7 @@ let currentEnemyDisp = $("#current-player-enemy-display");
 
 let attackBtn = $("#attack-button");
 
-let winsText = $("#wins-text");
-let lossesText = $("#losses-text");
+let killsText = $("#kills-text");
 
 // When DOM has finished loading
 $(document).ready(() => {
@@ -114,7 +125,7 @@ $(document).ready(() => {
       });
 
       // Create a new text div for card title
-      var cardTitle = $("<h5>", {
+      var cardTitle = $("<h6>", {
         class: "card-title",
       }).text(list[key].name);
 
@@ -149,14 +160,14 @@ $(document).ready(() => {
     // Assign that character to playerChar variable
     playerChar = list[character];
 
-    console.log("Player Selection: " + character);
-    console.log("Char at ID: " + list[character].name);
-    console.log(playerChar);
+    // console.log("Player Selection: " + character);
+    // console.log("Char at ID: " + list[character].name);
+    // console.log(playerChar);
 
     // Update the playerHasChosen condition
     playerHasChosen = true;
 
-    console.log(playerHasChosen);
+    // console.log(playerHasChosen);
 
     // Remove the selected character from the list
     delete list[character];
@@ -175,62 +186,69 @@ $(document).ready(() => {
 
   // Create a function to select an enemy from the enemies list
   selectEnemyFunc = (namesArr, mainArr) => {
-    console.log(namesArr);
+    // console.log(namesArr);
+
     // Randomly roll a number between 0 and length of enemiesArr
     currentEnemyRoll = Math.floor(Math.random() * namesArr.length);
 
-    console.log(currentEnemyRoll);
+    // console.log(currentEnemyRoll);
 
     // Assign enemy at that index to currentEnemy
     currentEnemyText = namesArr[currentEnemyRoll];
 
-    console.log(namesArr.length);
+    // console.log(namesArr.length);
 
     // convert currentEnemy to a single word all lower case and hold it in temp variable
     let currentEnemyTextFormatted = currentEnemyText
       .toLowerCase()
       .replace(/\s/g, "");
 
-    console.log("Current Enemy Name: " + currentEnemyTextFormatted);
+    // console.log("Current Enemy Name: " + currentEnemyTextFormatted);
 
     // Assign that character to playerChar variable
     currentEnemyChar = mainArr[currentEnemyTextFormatted];
 
-    console.log("Current Enemy Card:");
-    console.log(currentEnemyChar);
+    // console.log("Current Enemy Card:");
+    // console.log(currentEnemyChar);
 
     // Delete the selected enemy from the nameArr and from mainArr
     namesArr.splice(currentEnemyRoll, 1);
     delete mainArr[currentEnemyTextFormatted];
+    
+    // Clear the enemyRosterDisp
+    enemyRosterDisp.empty();
+    
+    // Run the renderCards function on the enemyRosterDisp
+    renderCharacterCards(mainArr, enemyRosterDisp); 
 
-    console.log(namesArr);
-    console.log(mainArr);
+    // console.log(namesArr);
+    // console.log(mainArr);
   };
 
   // Create a function that handles on click for when a player clicks on a card
   $(characterSelectionDisp).on("click", ".card", function () {
-    console.log("Card Clicked");
+    // console.log("Card Clicked");
 
     // Get a handle on the card clicked
     let clickedCard = $(this);
 
-    console.log(clickedCard);
+    // console.log(clickedCard);
 
     // Get a handle on the clicked card's name
     let clickedCardName = clickedCard
       .children("div.card-body")
-      .children("h5.card-title")
+      .children("h6.card-title")
       .text()
       .split(" ")
       .join("")
       .toLowerCase();
 
-    console.log("Clicked Card Name: " + clickedCardName);
+    // console.log("Clicked Card Name: " + clickedCardName);
 
     // Set playerChar to clickedCardName
     playerChar = clickedCardName;
 
-    console.log("Player Character:" + playerChar);
+    // console.log("Player Character:" + playerChar);
 
     // Run the selectCharFunc using playerChar and characterListCopy
     selectCharFunc(playerChar, characterListCopy);
@@ -238,7 +256,7 @@ $(document).ready(() => {
     // Append that character card to userChar
     playerCharList[clickedCardName] = playerChar;
 
-    console.log(playerCharList);
+    // console.log(playerCharList);
 
     // Render the playerChar card into the playerCharDisp
     renderCharacterCards(playerCharList, playerCharDisp);
@@ -252,29 +270,31 @@ $(document).ready(() => {
     // Render the enemyArr into enemyRosterDisp
     renderCharacterCards(enemiesArr, enemyRosterDisp);
 
-    console.log("Enemies Arr: ");
-    console.log(enemiesArr);
+    // console.log("Enemies Arr: ");
+    // console.log(enemiesArr);
 
     // Run the function to create name from enemiesArr
     createNameArr(enemiesArr);
 
-    console.log("Enemies Name Arr: ");
-    console.log(enemiesNamesArr);
+    // console.log("Enemies Name Arr: ");
+    // console.log(enemiesNamesArr);
 
     // Run function to randomly select an enemy from the names array
     selectEnemyFunc(enemiesNamesArr, enemiesArr);
 
-    console.log("Enemy Array minus randomly selected enemy: ");
-    console.log(enemiesArr);
+    // console.log("Enemy Array minus randomly selected enemy: ");
+    // console.log(enemiesArr);
 
     // Append that randomly chosen enemy card to enemyChar
     currentEnemyList[currentEnemyText] = currentEnemyChar;
 
-    console.log(currentEnemyList);
+    // console.log(currentEnemyList);
 
     // Render the randomly chosen enemy into currentEnemyDisp
     renderCharacterCards(currentEnemyList, currentEnemyDisp);
   });
+
+  // Create a function that
 
   // Create a function to listens for click of the attack button
   attackBtn.on("click", function () {
@@ -284,13 +304,154 @@ $(document).ready(() => {
     } else {
       console.log("Attack BTN Clicked");
 
-      
+      // Create a function to handle dead/alive status of a char
+      updateAliveStatusFunc = (character) => {
+        if (character["hp"] > 0) {
+          character["isAlive"] = true;
+
+          console.log(character["name"] + " is alive.");
+        } else {
+          character["isAlive"] = false;
+
+          console.log(character["name"] + " is dead.");
+        }
+      };
+
+      // Create a function to handle calculating attack success
+      calcAtkSuccessFunc = (character) => {
+        // playerChar
+        // currentEnemyChar
+
+        // console.log("Player Char Atk Lvl: " + character["attack"]);
+
+        // Roll a random number out of 100 and assign it to attackSuccessRoll
+        attackSuccessRoll = Math.floor(Math.random() * 100);
+        // console.log("Attack Success Roll: " + attackSuccessRoll);
+
+        // If attackSuccessRoll was higher than player's char's attack value
+        if (attackSuccessRoll > character["attack"]) {
+          // Update atkWasSuccessful to true
+          atkWasSuccessful = true;
+
+          console.log("Attack Successful!");
+        } else {
+          atkWasSuccessful = false;
+          console.log("Attack Unsuccessful!");
+        }
+      };
+
+      calcAtkSuccessFunc(playerChar, currentEnemyChar);
+
+      // Create a function for a successful attack
+      successfulAtkFunc = (atkChar, defChar) => {
+        // Conditions: attack was success, atkChar HP > 0, defChar HP > 0
+        if (atkWasSuccessful && atkChar["hp"] > 0) {
+          console.log(atkChar["name"] + " HP: " + atkChar["hp"]);
+          console.log(defChar["name"] + " HP: " + defChar["hp"]);
+
+          // Access defChar's HP value and subtract from it defChar's str value
+          defChar["hp"] -= atkChar["strength"];
+
+          console.log("Updated");
+          console.log(atkChar["name"] + " HP updated: " + atkChar["hp"]);
+          console.log(defChar["name"] + " HP updated: " + defChar["hp"]);
+
+          // Run deadAliveStatusFunc to see isAlive status of both characters
+          updateAliveStatusFunc(atkChar);
+          updateAliveStatusFunc(defChar);
+
+          console.log("______");
+        }
+      };
+
+      successfulAtkFunc(playerChar, currentEnemyChar);
+
+      // Create a function for an unsuccessful attack
+      unsuccessfulAtkFunc = (defChar, atkChar) => {
+        // Conditions: attack was success, atkChar HP > 0, defChar HP > 0
+        if (!atkWasSuccessful) {
+          console.log(atkChar["name"] + " HP: " + atkChar["hp"]);
+          console.log(defChar["name"] + " HP: " + defChar["hp"]);
+
+          // Access atkChar's HP value and subtract from it defChar's str value
+          atkChar["hp"] -= defChar["strength"];
+
+          console.log("Updated");
+          console.log(atkChar["name"] + " HP updated: " + atkChar["hp"]);
+          console.log(defChar["name"] + " HP updated: " + defChar["hp"]);
+
+          // Run deadAliveStatusFunc to see isAlive status of both characters
+          updateAliveStatusFunc(atkChar);
+          updateAliveStatusFunc(defChar);
+
+          console.log("______");
+        }
+      };
+
+      unsuccessfulAtkFunc(currentEnemyChar, playerChar);
+
+      // Create a function to handle what update fightOver condition
+      // (when either playerChar or currentEnemyChar's HP is 0)
+      updatefightOverFunc = (atkChar, defChar) => {
+        // If atkChar is dead
+        if ((atkChar["isAlive"] = false)) {
+          // Set fightOver condition to true
+          fightOver = true;
+
+          console.log("Fight is over.");
+
+          console.log("Winner is: " + defChar["name"]);
+        }
+        // if defChar is dead
+        else if ((defChar["isAlive"] = false)) {
+          // Set fightOver condition to true
+          fightOver = true;
+
+          console.log("Fight is over.");
+
+          console.log("Winner is: " + atkChar["name"]);
+        } else {
+          // Keep fightOver condition to false
+          fightOver = false;
+        }
+      };
+
+      updatefightOverFunc(playerChar, currentEnemyChar);
+
+      // Create a function to handle what happens when fightOver is true
+      handleFightOverFunc = (atkChar, defChar) => {
+        // If fightOver is true and atkChar is alive
+        if (fightOver && atkChar["isAlive"]) {
+          // Clear the currentEnemyDisp
+          currentEnemyDisp.empty();
+
+          // Update the wins counter by 1
+          killCount += 1;
+
+          // Update killsText to reflect current killCount
+          killsText.innerHTML = killCount;
+        }
+      };
+
+      handleFightOverFunc(playerChar, currentEnemyChar);
+
+      //   // If attackSuccessRoll was higher than player's char's
+      //   if (attackSuccessRoll > playerChar["attack"]) {
+      //     // Subtract the player's char's str amount from the enemies health
+      //     defChar["hp"] -= atkChar["attack"];
+
+      //     console.log(defChar["hp"]);
+
+      //     console.log(atkSuccessMsg);
+      //   } else {
+
+      //       console.log();
+      //   }
+
+      let atkSuccessMsg =
+        "You attacked " + currentEnemyText + " for __ damage!";
+      let atkFailMsg;
+      // If attackSuccessRoll was higher than condition one
     }
   });
-
-  // Create a function that inializes the game
-  initializeGameFunc = () => {
-    // Create a function to form the enemies array
-    createEnemiesArr = () => {};
-  };
 });
