@@ -25,6 +25,7 @@ No prerequisites are necessary for running this game.
 2. Bootstrap
 3. CSS
 4. Javascript
+5. jQuery
 
 ## Authors
 Khoa Nguyen - https://github.com/khnguyen94
